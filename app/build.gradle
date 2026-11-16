@@ -71,4 +71,5 @@ dependencies {
     implementation files("libs/ARSCLib-1.4.0.jar")
     implementation 'com.android.tools.build:apksig:8.7.3'
     implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.78.1'
 }
