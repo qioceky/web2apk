@@ -57,8 +57,19 @@ cadangan dari aplikasi — tanpa cadangan, ganti HP berarti APK baru
 tidak bisa menimpa yang lama. Pipeline patch ini terverifikasi di JVM
 (ARSCLib + zipalign -c + apksigner) sebelum diporting ke aplikasi.
 
+## Mode HTML (v0.4.0)
+
+Kartu 1 kini punya pilihan sumber: **Alamat Web** atau **HTML**. Mode HTML:
+tempel kode HTML atau pilih file `.html` — aplikasi hasil build membukanya
+dari `assets/page.html` di dalam APK sendiri (`file:///android_asset/`),
+jadi jalan full offline tanpa hosting. Didukung Mode Offline dan Project
+ZIP; Build Langsung GitHub tidak (kode HTML tidak bisa dikirim lewat input
+workflow). Batas: satu file HTML (CSS/JS inline); file pendamping terpisah
+belum ikut. Template runtime membaca `sourceType` dari config.json.
+
 ## Status
 
+v0.4.0 — mode HTML (offline + ZIP).
 v0.3.0 — mode offline tanpa GitHub.
 v0.2.0 — build langsung dari aplikasi via repo builder.
 v0.1.0 — rilis pertama: form + ambil info situs + pratinjau + generate

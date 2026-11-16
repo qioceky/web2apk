@@ -63,6 +63,9 @@ object ProjectGenerator {
                 val bytes = context.assets.open("genproject/$asset").use { it.readBytes() }
                 zip.putEntry(dest, bytes)
             }
+            if (cfg.sourceType == "html") {
+                zip.putEntry("app/src/main/assets/page.html", cfg.htmlContent.toByteArray(Charsets.UTF_8))
+            }
             writeIcons(zip, cfg, site)
         }
     }
@@ -78,6 +81,7 @@ object ProjectGenerator {
             "__PROJECT_SLUG__" to ProjectConfig.slugFromName(cfg.appName),
             "__PACKAGE__" to cfg.packageId,
             "__URL__" to ProjectConfig.normalizeUrl(cfg.siteUrl),
+            "__SOURCE_TYPE__" to cfg.sourceType,
             "__VERSION_NAME__" to cfg.versionName,
             "__VERSION_CODE__" to cfg.versionCode.toString(),
             "__THEME_COLOR__" to cfg.themeColor,

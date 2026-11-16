@@ -4,6 +4,8 @@ import org.json.JSONObject
 
 /** Konfigurasi satu project web→APK yang dibuat user. */
 data class ProjectConfig(
+    val sourceType: String = "url",
+    val htmlContent: String = "",
     val siteUrl: String = "",
     val appName: String = "",
     val packageId: String = "",
@@ -21,6 +23,7 @@ data class ProjectConfig(
     val createdAt: Long = 0L,
 ) {
     fun toJson(): JSONObject = JSONObject().apply {
+        put("sourceType", sourceType); put("htmlContent", htmlContent)
         put("siteUrl", siteUrl); put("appName", appName); put("packageId", packageId)
         put("versionName", versionName); put("versionCode", versionCode)
         put("themeColor", themeColor); put("javaScript", javaScript); put("zoom", zoom)
@@ -32,6 +35,7 @@ data class ProjectConfig(
 
     companion object {
         fun fromJson(o: JSONObject) = ProjectConfig(
+            sourceType = o.optString("sourceType", "url"), htmlContent = o.optString("htmlContent"),
             siteUrl = o.optString("siteUrl"), appName = o.optString("appName"),
             packageId = o.optString("packageId"), versionName = o.optString("versionName", "1.0"),
             versionCode = o.optInt("versionCode", 1), themeColor = o.optString("themeColor", "#FFD02E"),

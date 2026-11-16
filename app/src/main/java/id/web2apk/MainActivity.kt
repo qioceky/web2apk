@@ -145,8 +145,34 @@ fun Web2ApkApp() {
         }
     }
 
+    val pickHtml = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        scope.launch {
+            try {
+                val text = withContext(Dispatchers.IO) {
+                    context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+                        ?: throw IllegalStateException("Tidak bisa membaca file")
+                }
+                if (text.length > 2_000_000) {
+                    toast("File HTML terlalu besar (maks ±2 MB).")
+                    return@launch
+                }
+                cfg = cfg.copy(htmlContent = text)
+                status = "File HTML dimuat (${text.length} karakter)."
+            } catch (e: Exception) {
+                status = "Gagal membaca file: ${e.message}"
+            }
+        }
+    }
+
     if (showPreview) {
-        PreviewScreen(url = ProjectConfig.normalizeUrl(cfg.siteUrl), cfg = cfg) { showPreview = false }
+        PreviewScreen(
+            url = ProjectConfig.normalizeUrl(cfg.siteUrl),
+            html = if (cfg.sourceType == "html") cfg.htmlContent else null,
+            cfg = cfg
+        ) { showPreview = false }
         return
     }
 
@@ -168,7 +194,37 @@ fun Web2ApkApp() {
         ) {
             NeoCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("1 · Website", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Ink)
+                    Text("1 · Sumber Konten", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Ink)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        NeoButton(
+                            text = "Alamat Web",
+                            fill = if (cfg.sourceType == "url") Yellow else CardFill
+                        ) { cfg = cfg.copy(sourceType = "url") }
+                        NeoButton(
+                            text = "HTML",
+                            fill = if (cfg.sourceType == "html") Yellow else CardFill
+                        ) { cfg = cfg.copy(sourceType = "html"); site = null }
+                    }
+                    if (cfg.sourceType == "html") {
+                        Text(
+                            "Tempel kode HTML atau pilih file .html — aplikasi hasil build membukanya " +
+                                "dari dalam APK, jalan full offline. Satu file ya (CSS/JS inline).",
+                            fontSize = 12.sp, color = Muted
+                        )
+                        NeoButton(text = "Pilih File .html", fill = CardFill) {
+                            pickHtml.launch(arrayOf("text/html", "text/plain", "*/*"))
+                        }
+                        OutlinedTextField(
+                            value = cfg.htmlContent,
+                            onValueChange = { cfg = cfg.copy(htmlContent = it) },
+                            label = { Text("Kode HTML") },
+                            placeholder = { Text("<html><body>Halo!</body></html>") },
+                            minLines = 5,
+                            maxLines = 10,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text("${cfg.htmlContent.length} karakter", fontSize = 12.sp, color = Muted)
+                    } else {
                     OutlinedTextField(
                         value = cfg.siteUrl,
                         onValueChange = { cfg = cfg.copy(siteUrl = it) },
@@ -217,6 +273,7 @@ fun Web2ApkApp() {
                                 Text("Warna tema: ${cfg.themeColor}", fontSize = 12.sp, color = Muted)
                             }
                         }
+                    }
                     }
                 }
             }
@@ -278,10 +335,13 @@ fun Web2ApkApp() {
                 }
             }
 
-            val valid = cfg.siteUrl.isNotBlank() && cfg.appName.isNotBlank() &&
-                ProjectConfig.isValidPackageId(cfg.packageId)
+            val valid = (if (cfg.sourceType == "html") cfg.htmlContent.isNotBlank() else cfg.siteUrl.isNotBlank()) &&
+                cfg.appName.isNotBlank() && ProjectConfig.isValidPackageId(cfg.packageId)
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                NeoButton(text = "Pratinjau", fill = CardFill, enabled = cfg.siteUrl.isNotBlank()) { showPreview = true }
+                NeoButton(
+                    text = "Pratinjau", fill = CardFill,
+                    enabled = if (cfg.sourceType == "html") cfg.htmlContent.isNotBlank() else cfg.siteUrl.isNotBlank()
+                ) { showPreview = true }
                 NeoButton(text = if (busy) "Memproses…" else "Buat Project ZIP", enabled = valid && !busy) {
                     createZip.launch(ProjectConfig.slugFromName(cfg.appName) + "-project.zip")
                 }
@@ -325,14 +385,14 @@ fun Web2ApkApp() {
                 }
             }
             Spacer(Modifier.height(8.dp))
-            Text("Web2APK v0.3.0 — dibuat untuk mengubah web jadi APK tanpa ribet.",
+            Text("Web2APK v0.4.0 — dibuat untuk mengubah web jadi APK tanpa ribet.",
                 fontSize = 12.sp, color = Muted)
         }
     }
 }
 
 @Composable
-private fun PreviewScreen(url: String, cfg: ProjectConfig, onBack: () -> Unit) {
+private fun PreviewScreen(url: String, html: String?, cfg: ProjectConfig, onBack: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize().background(Paper)) {
         Row(
             modifier = Modifier.fillMaxWidth().background(Yellow).padding(12.dp),
@@ -340,7 +400,7 @@ private fun PreviewScreen(url: String, cfg: ProjectConfig, onBack: () -> Unit) {
         ) {
             Text("‹ Kembali", fontWeight = FontWeight.Bold, color = Ink,
                 modifier = Modifier.clickable { onBack() }.padding(6.dp))
-            Text("Pratinjau — $url", fontSize = 13.sp, color = Ink, maxLines = 1)
+            Text("Pratinjau — ${html?.let { "HTML lokal" } ?: url}", fontSize = 13.sp, color = Ink, maxLines = 1)
         }
         var webView by remember { mutableStateOf<WebView?>(null) }
         DisposableEffect(Unit) { onDispose { webView?.destroy() } }
@@ -351,7 +411,8 @@ private fun PreviewScreen(url: String, cfg: ProjectConfig, onBack: () -> Unit) {
                     settings.javaScriptEnabled = cfg.javaScript
                     settings.domStorageEnabled = true
                     settings.setSupportZoom(cfg.zoom)
-                    loadUrl(url)
+                    if (html != null) loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null)
+                    else loadUrl(url)
                 }
             },
             modifier = Modifier.fillMaxSize()

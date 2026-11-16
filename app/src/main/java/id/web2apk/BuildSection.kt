@@ -66,6 +66,13 @@ fun BuildSection(cfg: ProjectConfig, site: SiteInfo?, valid: Boolean, store: Pro
                     "dan bisa diunduh + dipasang dari sini. Butuh token GitHub milikmu sendiri.",
                 fontSize = 12.sp, color = Muted
             )
+            if (cfg.sourceType == "html") {
+                Text(
+                    "Mode HTML tidak didukung jalur ini (kode HTML tidak bisa dikirim lewat input " +
+                        "workflow GitHub). Pakai Mode Offline (kartu 5) atau Project ZIP (kartu 3).",
+                    fontSize = 12.sp, color = Color.Red
+                )
+            }
 
             if (token.isEmpty()) {
                 OutlinedTextField(
@@ -126,7 +133,7 @@ fun BuildSection(cfg: ProjectConfig, site: SiteInfo?, valid: Boolean, store: Pro
             if (token.isNotEmpty()) {
                 NeoButton(
                     text = if (building) "Sedang Build…" else "Build APK Sekarang",
-                    enabled = valid && !building
+                    enabled = valid && !building && cfg.sourceType != "html"
                 ) {
                     tokenStore.builderRepo = repo
                     apkFile = null

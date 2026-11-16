@@ -88,6 +88,7 @@ object OfflineBuilder {
 
         onStep("Menulis konfigurasi website…")
         val configJson = JSONObject().apply {
+            put("sourceType", cfg.sourceType)
             put("startUrl", ProjectConfig.normalizeUrl(cfg.siteUrl))
             put("appName", cfg.appName)
             put("themeColor", cfg.themeColor)
@@ -101,6 +102,9 @@ object OfflineBuilder {
             put("cookies", cfg.allowCookies)
         }
         replacements["assets/config.json"] = configJson.toString().toByteArray(Charsets.UTF_8)
+        if (cfg.sourceType == "html") {
+            replacements["assets/page.html"] = cfg.htmlContent.toByteArray(Charsets.UTF_8)
+        }
 
         val unsigned = File(workDir, "unsigned.apk")
         ZipPatch.patch(stage1, unsigned, replacements)
