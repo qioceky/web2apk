@@ -45,8 +45,21 @@ Aplikasi memicu workflow di repo builder `qioceky/web2apk-builder`,
 memantau langkah build-nya, mengunduh APK dari Releases repo builder,
 dan menawarkan pemasangan langsung.
 
+## Mode offline (v0.3.0)
+
+Kartu **5 · Mode Offline (Tanpa GitHub)**: APK dibuat langsung di HP dari
+`template.apk` yang dibundel aplikasi. Package ID, nama, versi, dan warna
+ikon diedit di manifest biner + resources.arsc memakai ARSCLib,
+`assets/config.json` + ikon diganti sekalian zipalign, lalu APK
+ditandatangani keystore lokal (apksig + sertifikat self-signed
+BouncyCastle) yang dibuat sekali di HP. Keystore bisa diekspor untuk
+cadangan dari aplikasi — tanpa cadangan, ganti HP berarti APK baru
+tidak bisa menimpa yang lama. Pipeline patch ini terverifikasi di JVM
+(ARSCLib + zipalign -c + apksigner) sebelum diporting ke aplikasi.
+
 ## Status
 
+v0.3.0 — mode offline tanpa GitHub.
 v0.2.0 — build langsung dari aplikasi via repo builder.
 v0.1.0 — rilis pertama: form + ambil info situs + pratinjau + generate
 project ZIP + riwayat project.

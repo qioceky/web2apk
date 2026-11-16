@@ -29,6 +29,7 @@ object ProjectGenerator {
         "app/src/main/AndroidManifest.xml.tmpl" to "app/src/main/AndroidManifest.xml",
         "app/src/main/res/values/strings.xml.tmpl" to "app/src/main/res/values/strings.xml",
         "app/src/main/res/values/themes.xml.tmpl" to "app/src/main/res/values/themes.xml",
+        "app/src/main/assets/config.json.tmpl" to "app/src/main/assets/config.json",
         ".github/workflows/build.yml.tmpl" to ".github/workflows/build.yml",
         "README.md.tmpl" to "README.md",
         ".gitignore.tmpl" to ".gitignore",
@@ -70,6 +71,7 @@ object ProjectGenerator {
         fun b(v: Boolean) = v.toString()
         return mapOf(
             "__APP_NAME__" to cfg.appName,
+            "__APP_NAME_JSON__" to cfg.appName.replace("\\", "\\\\").replace("\"", "\\\""),
             "__APP_NAME_XML__" to cfg.appName.replace("&", "&amp;").replace("<", "&lt;")
                 .replace(">", "&gt;").replace("\"", "&quot;").replace("'", "\\'"),
             "__PROJECT_NAME__" to cfg.appName.replace(Regex("[^A-Za-z0-9 ]"), "").trim().ifEmpty { "WebApp" },

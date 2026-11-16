@@ -297,6 +297,10 @@ fun Web2ApkApp() {
                 history = store.loadAll()
             }
 
+            OfflineSection(cfg = cfg, site = site, valid = valid, store = store) {
+                history = store.loadAll()
+            }
+
             if (history.isNotEmpty()) {
                 Text("Project saya", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Ink)
                 history.forEach { item ->
@@ -321,7 +325,7 @@ fun Web2ApkApp() {
                 }
             }
             Spacer(Modifier.height(8.dp))
-            Text("Web2APK v0.2.0 — dibuat untuk mengubah web jadi APK tanpa ribet.",
+            Text("Web2APK v0.3.0 — dibuat untuk mengubah web jadi APK tanpa ribet.",
                 fontSize = 12.sp, color = Muted)
         }
     }
