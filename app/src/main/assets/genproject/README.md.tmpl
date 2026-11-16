@@ -1,0 +1,44 @@
+# __APP_NAME__
+
+Aplikasi Android (WebView) untuk **__URL__**, dibuat dengan **Web2APK**.
+
+- Nama aplikasi: __APP_NAME__
+- Package: `__PACKAGE__`
+- Versi: __VERSION_NAME__ (code __VERSION_CODE__)
+- Warna tema: `__THEME_COLOR__`
+
+## Pilihan WebView
+
+| Pilihan | Nilai |
+| --- | --- |
+| JavaScript | __OPT_JAVASCRIPT__ |
+| Zoom | __OPT_ZOOM__ |
+| Upload file | __OPT_FILE_UPLOAD__ |
+| Link eksternal dibuka di browser | __OPT_EXTERNAL_LINKS__ |
+| Splash screen | __OPT_SPLASH__ |
+| Sembunyikan bilah judul | __OPT_HIDE_TOOLBAR__ |
+| Tarik untuk segarkan | __OPT_PULL_REFRESH__ |
+| Cookie | __OPT_COOKIES__ |
+
+## Cara build jadi APK (GitHub Actions)
+
+1. Push project ini ke repo GitHub (publik atau privat).
+2. Buat keystore SEKALI (di komputer/Termux), simpan file-nya baik-baik —
+   keystore yang sama wajib dipakai untuk semua update, kalau ganti,
+   aplikasi lama harus di-uninstall dulu:
+
+   ```
+   keytool -genkeypair -v -keystore genapp.keystore -storetype JKS \
+     -alias genapp -keyalg RSA -keysize 2048 -validity 10000
+   base64 -w0 genapp.keystore > genapp.keystore.b64
+   ```
+
+3. Di repo GitHub: Settings → Secrets and variables → Actions, tambahkan:
+   - `GENAPP_KEYSTORE_BASE64` — isi file `genapp.keystore.b64`
+   - `GENAPP_KEYSTORE_PASSWORD` — password keystore
+   - `GENAPP_KEY_ALIAS` — `genapp`
+   - `GENAPP_KEY_PASSWORD` — password kunci
+4. Jalankan workflow **build-__PROJECT_SLUG__** (tab Actions), unduh APK
+   dari artifact hasil build, lalu install.
+
+Build lokal (opsional, butuh Android SDK): `./gradlew assembleRelease`
