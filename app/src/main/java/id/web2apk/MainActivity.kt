@@ -17,7 +17,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -176,7 +179,7 @@ fun Web2ApkApp() {
         return
     }
 
-    Column(modifier = Modifier.fillMaxSize().background(Paper)) {
+    Column(modifier = Modifier.fillMaxSize().background(Paper).windowInsetsPadding(WindowInsets.systemBars)) {
         // Header
         Row(
             modifier = Modifier.fillMaxWidth().background(Yellow).padding(16.dp),
@@ -385,7 +388,7 @@ fun Web2ApkApp() {
                 }
             }
             Spacer(Modifier.height(8.dp))
-            Text("Web2APK v0.4.0 — dibuat untuk mengubah web jadi APK tanpa ribet.",
+            Text("Web2APK v0.4.1 — dibuat untuk mengubah web jadi APK tanpa ribet.",
                 fontSize = 12.sp, color = Muted)
         }
     }
@@ -393,7 +396,7 @@ fun Web2ApkApp() {
 
 @Composable
 private fun PreviewScreen(url: String, html: String?, cfg: ProjectConfig, onBack: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().background(Paper)) {
+    Column(modifier = Modifier.fillMaxSize().background(Paper).windowInsetsPadding(WindowInsets.systemBars)) {
         Row(
             modifier = Modifier.fillMaxWidth().background(Yellow).padding(12.dp),
             verticalAlignment = Alignment.CenterVertically

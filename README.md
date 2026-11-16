@@ -69,6 +69,12 @@ belum ikut. Template runtime membaca `sourceType` dari config.json.
 
 ## Status
 
+v0.4.1 — fix uji lapangan v0.4.0: (1) error "cannot create signer: no such
+algorithm SHA256WITHRSA for provider BC" — nama provider "BC" di Android
+menunjuk BouncyCastle bawaan sistem yang dipangkas; LocalKeyStore kini
+memakai INSTANCE provider penuh dari bcprov yang dibundel. (2) Fullscreen:
+UI maker + aplikasi hasil generate kini menghormati window insets sistem
+(konten tidak tertutup status bar di Android 15 edge-to-edge).
 v0.4.0 — mode HTML (offline + ZIP).
 v0.3.0 — mode offline tanpa GitHub.
 v0.2.0 — build langsung dari aplikasi via repo builder.

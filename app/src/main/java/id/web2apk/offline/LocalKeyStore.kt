@@ -10,7 +10,6 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder
 import java.io.File
-import java.io.InputStream
 import java.io.OutputStream
 import java.math.BigInteger
 import java.security.KeyPairGenerator
@@ -18,7 +17,6 @@ import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.SecureRandom
-import java.security.Security
 import java.security.cert.X509Certificate
 import java.util.Date
 import javax.crypto.Cipher
@@ -61,9 +59,13 @@ class LocalKeyStore(private val context: Context) {
     }
 
     private fun create(): LocalSigner {
-        ensureBcProvider()
+        // PENTING: jangan pakai nama provider "BC" — di Android nama itu
+        // menunjuk BouncyCastle bawaan sistem yang algoritmanya dipangkas
+        // ("no such algorithm: SHA256WITHRSA for provider BC"). Pakai
+        // INSTANCE provider penuh dari bcprov yang dibundel aplikasi.
+        val bc = BouncyCastleProvider()
         val pw = randomPassword()
-        val kpg = KeyPairGenerator.getInstance("RSA", "BC")
+        val kpg = KeyPairGenerator.getInstance("RSA", bc)
         kpg.initialize(2048, SecureRandom())
         val pair = kpg.generateKeyPair()
 
@@ -74,8 +76,8 @@ class LocalKeyStore(private val context: Context) {
             Date(now - 24L * 3600 * 1000), Date(now + 25L * 365 * 24 * 3600 * 1000),
             subject, pair.public
         )
-        val signer = JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(pair.private)
-        val cert = JcaX509CertificateConverter().setProvider("BC").getCertificate(builder.build(signer))
+        val signer = JcaContentSignerBuilder("SHA256withRSA").setProvider(bc).build(pair.private)
+        val cert = JcaX509CertificateConverter().setProvider(bc).getCertificate(builder.build(signer))
 
         val ks = KeyStore.getInstance("PKCS12")
         ks.load(null, null)
@@ -135,17 +137,5 @@ class LocalKeyStore(private val context: Context) {
         private const val ALIAS = "web2apk-offline"
         private const val AES_ALIAS = "web2apk_localkey_pw"
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
-
-        @Volatile private var bcReady = false
-        fun ensureBcProvider() {
-            if (!bcReady) {
-                synchronized(this) {
-                    if (Security.getProvider("BC") == null) {
-                        Security.addProvider(BouncyCastleProvider())
-                    }
-                    bcReady = true
-                }
-            }
-        }
     }
 }
