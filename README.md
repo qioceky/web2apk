@@ -36,7 +36,17 @@ debug bertanda tangan acak.
 - Build hanya lewat GitHub Actions, keystore di-pin sejak rilis pertama
   (secret `WEB2APK_KEYSTORE_BASE64` dkk.).
 
+## Build langsung (v0.2.0)
+
+Kartu **4 · Build Langsung ke APK**: masukkan token GitHub milikmu
+(classic, scope `repo` + `workflow` — disimpan terenkripsi Android Keystore,
+hanya dikirim ke api.github.com), lalu ketuk **Build APK Sekarang**.
+Aplikasi memicu workflow di repo builder `qioceky/web2apk-builder`,
+memantau langkah build-nya, mengunduh APK dari Releases repo builder,
+dan menawarkan pemasangan langsung.
+
 ## Status
 
+v0.2.0 — build langsung dari aplikasi via repo builder.
 v0.1.0 — rilis pertama: form + ambil info situs + pratinjau + generate
 project ZIP + riwayat project.

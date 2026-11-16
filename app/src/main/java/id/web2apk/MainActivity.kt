@@ -55,11 +55,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private val Paper = Color(0xFFFFFDF7)
-private val Ink = Color(0xFF161616)
-private val Yellow = Color(0xFFFFD02E)
-private val CardFill = Color(0xFFFFFFFF)
-private val Muted = Color(0xFF6B6B6B)
+val Paper = Color(0xFFFFFDF7)
+val Ink = Color(0xFF161616)
+val Yellow = Color(0xFFFFD02E)
+val CardFill = Color(0xFFFFFFFF)
+val Muted = Color(0xFF6B6B6B)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun NeoCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+fun NeoCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Box(
         modifier = modifier
             .background(CardFill, RoundedCornerShape(14.dp))
@@ -79,7 +79,7 @@ private fun NeoCard(modifier: Modifier = Modifier, content: @Composable () -> Un
 }
 
 @Composable
-private fun NeoButton(text: String, fill: Color = Yellow, enabled: Boolean = true, onClick: () -> Unit) {
+fun NeoButton(text: String, fill: Color = Yellow, enabled: Boolean = true, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         enabled = enabled,
@@ -293,6 +293,10 @@ fun Web2ApkApp() {
                 fontSize = 12.sp, color = Muted
             )
 
+            BuildSection(cfg = cfg, site = site, valid = valid, store = store) {
+                history = store.loadAll()
+            }
+
             if (history.isNotEmpty()) {
                 Text("Project saya", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Ink)
                 history.forEach { item ->
@@ -317,7 +321,7 @@ fun Web2ApkApp() {
                 }
             }
             Spacer(Modifier.height(8.dp))
-            Text("Web2APK v0.1.0 — dibuat untuk mengubah web jadi APK tanpa ribet.",
+            Text("Web2APK v0.2.0 — dibuat untuk mengubah web jadi APK tanpa ribet.",
                 fontSize = 12.sp, color = Muted)
         }
     }
