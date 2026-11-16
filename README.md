@@ -69,6 +69,14 @@ belum ikut. Template runtime membaca `sourceType` dari config.json.
 
 ## Status
 
+v0.4.2 — fix APK offline ditolak installer ("App not installed"): file
+hasil bedah menunjukkan ~110 entri STORED (termasuk resources.arsc)
+meleset alignment 1–3 byte — ZipOutputStream di ART memperlakukan
+extra field/buffering berbeda dari JVM sehingga hitungan offset
+ZipPatch meleset. ZipPatch kini PENULIS ZIP MANUAL (offset aritmetika,
+tanpa data descriptor, padding 0xD935 verbatim) + self-check alignment
+di aplikasi sebelum APK ditawarkan ke pemasang. Terverifikasi JVM:
+zipalign -c lulus sebelum & sesudah tanda tangan apksig.
 v0.4.1 — fix uji lapangan v0.4.0: (1) error "cannot create signer: no such
 algorithm SHA256WITHRSA for provider BC" — nama provider "BC" di Android
 menunjuk BouncyCastle bawaan sistem yang dipangkas; LocalKeyStore kini

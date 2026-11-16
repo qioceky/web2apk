@@ -121,6 +121,15 @@ object OfflineBuilder {
             .setV4SigningEnabled(false)
             .build()
             .sign()
+
+        // Self-check: installer menolak APK yang entri STORED-nya tidak
+        // sejajar (kasus v0.4.1). Gagal di sini = pesan jelas, bukan APK
+        // rusak yang ditolak diam-diam oleh pemasang.
+        onStep("Memeriksa hasil akhir…")
+        val badEntry = ZipPatch.checkAlignment(outApk)
+        if (badEntry != null) {
+            throw IllegalStateException("Alignment ZIP gagal pada entri $badEntry — laporkan pesan ini.")
+        }
         onStep("Selesai")
         return outApk
     }
