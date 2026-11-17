@@ -388,7 +388,7 @@ fun Web2ApkApp() {
                 }
             }
             Spacer(Modifier.height(8.dp))
-            Text("Web2APK v0.4.2 — dibuat untuk mengubah web jadi APK tanpa ribet.",
+            Text("Web2APK v0.4.3 — dibuat untuk mengubah web jadi APK tanpa ribet.",
                 fontSize = 12.sp, color = Muted)
         }
     }

@@ -69,6 +69,12 @@ belum ikut. Template runtime membaca `sourceType` dari config.json.
 
 ## Status
 
+v0.4.3 — template v1.3: ikon status bar & navigation bar aplikasi hasil
+generate dibuat gelap (isAppearanceLightStatusBars/NavigationBars) —
+sebelumnya ikon putih di atas latar terang jadi tak terlihat (laporan
+lapangan dari aplikasi API CHECKER user). Sekalian kabar baiknya:
+rantai Mode Offline TERBUKTI PENUH di lapangan 2026-11-17 — aplikasi
+HTML user terpasang & berjalan dari build offline v0.4.2.
 v0.4.2 — fix APK offline ditolak installer ("App not installed"): file
 hasil bedah menunjukkan ~110 entri STORED (termasuk resources.arsc)
 meleset alignment 1–3 byte — ZipOutputStream di ART memperlakukan
